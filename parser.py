@@ -6,8 +6,6 @@ Author: Gustavo Serra Scalet
 Licença: GPLv3 ou mais recente
 """
 
-__VERSION__ = 0.1
-
 def steinerParser(source, verbose = False, args = []):
 	"""
 	Parses the source file and returns the structure
@@ -43,30 +41,4 @@ def steinerParser(source, verbose = False, args = []):
 			terminals.append(int(data['edge_name']))
 			# continue  # not needed, it's the end of this loop anyway
 	# end for
-	return edges, terminals
-
-if __name__ == "__main__":
-	from sys import argv, exit
-	from os import sep
-	from optparse import OptionParser
-	
-	usage = """usage: %prog SOURCE_FILE [-v --verbose]
-Parses input SOURCE_FILE to the desired structure"""
-	parser = OptionParser(usage,
-			description=steinerParser.__doc__.replace('\t',''),
-			version="%%prog %s" % __VERSION__)
-	parser.add_option('-v', '--verbose', dest='verbose', action="store_true",
-		default=False, help="Verbose")
-	
-	if len(argv) == 2 and argv[1] in ('-h', '--help', '--version') or len(argv) == 1:
-		# not enough arguments
-		print """ERROR: not enough arguments.
-Try `%s --help' for more information""" % argv[0].split(sep)[-1]
-		exit(1)
-	else:
-		source = argv[1]
-
-	(opt, args) = parser.parse_args(argv[2:])
-	verbose = opt.verbose
-	steinerParser(source, verbose, args)
 
