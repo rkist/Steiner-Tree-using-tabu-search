@@ -16,11 +16,19 @@ def steinerParser(source, verbose = False, args = []):
 	_EDGE_REGEX = compile('E\s+(?P<origin>[0-9]*)\s+(?P<destiny>[0-9]*)\s+(?P<weight>[0-9]*)')  # for a common edge
 	_TERMINAL_REGEX = compile('T\s+(?P<edge_name>[0-9]*)')  # for a terminal vertex
 
-	# edges[x] = (y,w) : there is an edge with weight w from x to y 
-	edges = {}
-	# list of all the vertex that are terminals, so we'll have to find a path
+	# graph[x] = [(y,w),] : there is an edge with weight w from x to y 
+	graph = {}
+	# list of all the vertices that are terminals, so we'll have to find a path
 	# with them that has minimal cost 
 	terminals = []
+
+	# auxiliary functions
+	def insert(origin, data):
+		"""Makes the insertion correct, creating a list when needed"""
+		if graph.has_key(origin):
+			graph[origin].append(data)
+		else:
+			graph[origin] = [data,]
 
 	for line in content:
 		clean_line = line.strip().upper()  # removing spaces on [0] and [-1] and uppering case
@@ -30,8 +38,8 @@ def steinerParser(source, verbose = False, args = []):
 			if verbose:
 				print "Line '%s' is an edge description line with %s" % (line, str(data))
 			# non-directional graph
-			edges[int(data['origin'])] = int(data['destiny']), int(data['weight'])
-			edges[int(data['destiny'])] = int(data['origin']), int(data['weight'])
+			insert(int(data['origin']), (int(data['destiny']), int(data['weight'])))
+			insert(int(data['destiny']), (int(data['origin']), int(data['weight'])))
 			continue
 		terminal_match = search(_TERMINAL_REGEX, clean_line)
 		if terminal_match:  # terminal description line
@@ -41,4 +49,5 @@ def steinerParser(source, verbose = False, args = []):
 			terminals.append(int(data['edge_name']))
 			# continue  # not needed, it's the end of this loop anyway
 	# end for
+	return graph, terminals
 
